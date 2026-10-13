@@ -71,7 +71,7 @@ Le seul échange réseau de Allège est cette lecture de la version publiée. Au
 
 Les images plus petites que le côté demandé ne sont jamais agrandies. En entrée, Allège lit tout ce que macOS sait ouvrir : JPEG, PNG, HEIC, TIFF, WebP, AVIF, GIF, BMP, la plupart des RAW. En sortie, WebP n'est pas proposé : macOS ne sait pas l'écrire sans bibliothèque tierce, et Allège n'en embarque aucune.
 
-- **Raccourci global** (⇧⌘Espace par défaut, modifiable dans les Réglages) : affiche ou masque Allège depuis n'importe quelle app.
+- **Raccourci global** (⌃⌥⌘Espace par défaut, modifiable dans les Réglages) : affiche ou masque Allège depuis n'importe quelle app.
 - Fermer la fenêtre ne quitte pas l'app : le raccourci et l'icône de la barre des menus restent actifs. **⌘Q** quitte vraiment.
 
 ### Vos données
