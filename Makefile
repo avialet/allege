@@ -1,4 +1,5 @@
 SHELL := /bin/zsh
+.SHELLFLAGS := -o pipefail -c
 APP := Allege
 PROJECT := $(APP).xcodeproj
 BUILD_DIR := $(CURDIR)/build
@@ -28,7 +29,7 @@ xcode-build: gen
 	cp -R $(DERIVED)/Build/Products/Debug/$(APP).app $(BUILD_DIR)/$(APP).app
 
 spm-build:
-	swift build --product $(APP) 2>&1 | grep -E "error|warning: var|Build" || true
+	swift build --product $(APP) 2>&1 | grep -E "error|warning: var|Build"
 	scripts/bundle.sh debug
 
 run: build
@@ -39,7 +40,7 @@ run: build
 # l'ouverture a la connexion et Spotlight), puis lance.
 INSTALL_DIR := /Applications
 install:
-	swift build -c release --product $(APP) 2>&1 | grep -E "error|Build" || true
+	swift build -c release --product $(APP) 2>&1 | grep -E "error|Build"
 	scripts/bundle.sh release
 	pkill -x $(APP) || true
 	rm -rf $(INSTALL_DIR)/$(APP).app
@@ -48,7 +49,7 @@ install:
 
 # Version distribuable : build/$(APP)-X.Y.Z.dmg + .sha256 (voir docs/publier-une-version.md).
 release:
-	swift build -c release --product $(APP) 2>&1 | grep -E "error|Build" || true
+	swift build -c release --product $(APP) 2>&1 | grep -E "error|Build"
 	scripts/bundle.sh release
 	scripts/make-dmg.sh
 

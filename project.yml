@@ -44,7 +44,12 @@ targets:
         CFBundleURLTypes:
           - CFBundleURLName: fr.vialet.allege
             CFBundleURLSchemes: [allege]
-        LSApplicationCategoryType: public.app-category.productivity
+        LSApplicationCategoryType: public.app-category.photography
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: Image
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes: [public.image]
         CFBundleIconFile: AppIcon
     entitlements:
       path: Allege/Resources/Allege.entitlements

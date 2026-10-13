@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/screenshots/icone.png" width="128" alt="Icône d'Allège">
+
 # Allège
 
 **Allège vos images sans les envoyer nulle part.**
@@ -10,15 +12,17 @@
 
 [**Télécharger le DMG**](https://github.com/avialet/allege/releases/latest) · [Site](https://allege.vialet.app)
 
+<img src="docs/screenshots/fenetre.png" width="900" alt="Allège après traitement de cinq images">
+
 </div>
 
 ## Ce que fait Allège
 
-<!-- a adapter : trois idees, une phrase chacune -->
+Déposez des photos, des captures, un dossier entier. Allège les réduit, les convertit et retire ce qu'elles racontent de vous, puis vous rend des fichiers prêts à partir.
 
-- **Première idée.** Une phrase.
-- **Deuxième idée.** Une phrase.
-- **Rester chez vous.** Tout est stocké sur votre Mac. Aucun compte, aucun serveur, aucune télémétrie.
+- **Un préréglage par intention, lisible en une phrase.** « Pour un mail : 1600 px de côté au plus, JPEG 80 %, sans métadonnées. » « Pour le web », « Pour impression », « Juste convertir ». Pas de curseurs à deviner : la phrase dit exactement ce qui va se passer, et le poids attendu s'affiche avant de lancer.
+- **Rien ne part, rien n'est écrasé.** Tout est calculé sur votre Mac avec les bibliothèques d'images d'Apple. Les originaux restent intacts : le résultat arrive à côté (`photo-mail.jpg`) ou dans le dossier de votre choix, jamais à la place.
+- **Les métadonnées en moins.** Position GPS, appareil, objectif, date de prise de vue : retirés par défaut, conservés si vous le demandez. L'orientation est appliquée aux pixels, pour que l'image s'affiche droite partout.
 
 ## Installation
 
@@ -53,19 +57,26 @@ Le seul échange réseau de Allège est cette lecture de la version publiée. Au
 
 ## Notice
 
-<!-- a adapter -->
+1. **Déposez** des images ou des dossiers dans la fenêtre, ou choisissez-les avec **⌘O**, ou faites un clic droit sur un fichier dans le Finder › **Ouvrir avec › Allège**.
+2. **Choisissez** le préréglage. Le format (JPEG, PNG, HEIC, AVIF) et le dossier de sortie se changent à côté.
+3. **Alléger** (**⌘↩**). Chaque ligne affiche le poids avant et après, et le nom du fichier produit.
+4. **Emportez** le résultat : glissez une ligne vers le Finder, un mail ou un message, ou cliquez **Afficher dans le Finder**.
+
+| Préréglage | Côté le plus long | Format et qualité | Métadonnées |
+|---|---|---|---|
+| Pour un mail | 1600 px | JPEG 80 % | retirées |
+| Pour le web | 2048 px | JPEG 78 % | retirées |
+| Pour impression | taille d'origine | JPEG 92 % | retirées |
+| Juste convertir | taille d'origine | JPEG 90 % | conservées |
+
+Les images plus petites que le côté demandé ne sont jamais agrandies. En entrée, Allège lit tout ce que macOS sait ouvrir : JPEG, PNG, HEIC, TIFF, WebP, AVIF, GIF, BMP, la plupart des RAW. En sortie, WebP n'est pas proposé : macOS ne sait pas l'écrire sans bibliothèque tierce, et Allège n'en embarque aucune.
 
 - **Raccourci global** (⇧⌘Espace par défaut, modifiable dans les Réglages) : affiche ou masque Allège depuis n'importe quelle app.
 - Fermer la fenêtre ne quitte pas l'app : le raccourci et l'icône de la barre des menus restent actifs. **⌘Q** quitte vraiment.
-- Le lien `allege://` ouvre la fenêtre principale.
 
 ### Vos données
 
-```text
-~/Library/Application Support/Allege/allege.sqlite
-```
-
-Pour sauvegarder, copiez ce dossier. Pour repartir de zéro, quittez l'app et supprimez-le.
+Allège ne conserve rien : ni historique, ni base de données. Ses seuls réglages (préréglage, format, dossier de sortie) sont dans les préférences de l'app.
 
 ## Compiler depuis les sources
 
@@ -82,7 +93,7 @@ make release   # fabrique build/Allege-X.Y.Z.dmg et son empreinte
 
 | Dossier | Contenu |
 |---|---|
-| `Packages/AllegeCore` | Noyau sans interface : modèles, base SQLite ([GRDB](https://github.com/groue/GRDB.swift)), logique |
+| `Packages/AllegeCore` | Noyau sans interface : formats, préréglages, collecte des fichiers, traitement ImageIO, estimation |
 | `Allege` | L'application SwiftUI ; `App/Brand.swift` porte son identité |
 | `scripts` | Assemblage de l'app, du DMG et de l'icône |
 | `docs` | [Publier une version](docs/publier-une-version.md), [tests](docs/tests.md), notes de version |

@@ -1,25 +1,18 @@
 // swift-tools-version: 6.0
 import PackageDescription
 
+// Noyau sans interface : formats, prereglages, traitement ImageIO.
+// Allege n'a pas de base de donnees : rien n'est conserve entre deux lancements.
 let package = Package(
     name: "AllegeCore",
     platforms: [.macOS(.v15)],
     products: [
         .library(name: "AllegeCore", targets: ["AllegeCore"]),
     ],
-    dependencies: [
-        .package(url: "https://github.com/groue/GRDB.swift.git", from: "7.0.0"),
-    ],
     targets: [
-        .target(
-            name: "AllegeCore",
-            dependencies: [.product(name: "GRDB", package: "GRDB.swift")]
-        ),
+        .target(name: "AllegeCore"),
         // Harnais de tests : XCTest et Swift Testing ne sont pas livres avec
         // les Command Line Tools (voir docs/tests.md).
-        .executableTarget(
-            name: "allegecore-check",
-            dependencies: ["AllegeCore"]
-        ),
+        .executableTarget(name: "allegecore-check", dependencies: ["AllegeCore"]),
     ]
 )

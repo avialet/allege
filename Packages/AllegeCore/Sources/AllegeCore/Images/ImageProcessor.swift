@@ -123,7 +123,7 @@ public enum ImageProcessor {
         let pixels = Double(max(0, width)) * Double(max(0, height))
         guard pixels > 0 else { return 0 }
         let q = min(max(quality, 0), 1)
-        let jpeg = 0.06 + 0.5 * q * q * q
+        let jpeg = 0.03 + 0.28 * q * q * q
         let bytesPerPixel: Double = switch format {
         case .jpeg: jpeg
         case .heic: jpeg * 0.55
