@@ -42,6 +42,7 @@ extension AppDelegate {
         Task { @MainActor in
             if !files.isEmpty { AppState.shared.add(files) }
             try? await Task.sleep(for: .seconds(2))
+            await applySnapshotSize(defaults)
             if let window = WindowSummoner.mainWindow { try? WindowSnapshot.write(window, to: URL(fileURLWithPath: base + "-1.png")) }
             if process {
                 AppState.shared.processAll()
@@ -54,6 +55,17 @@ extension AppDelegate {
             }
             NSApp.terminate(nil)
         }
+    }
+
+    /// `-AllegeSnapshotSize 1000x720` : taille de contenu (points) de la fenetre principale avant capture.
+    func applySnapshotSize(_ defaults: UserDefaults) async {
+        guard let spec = defaults.string(forKey: "AllegeSnapshotSize") else { return }
+        let parts = spec.lowercased().split(separator: "x").compactMap { Double($0) }
+        guard parts.count == 2, parts.allSatisfy({ $0 > 0 }), let window = WindowSummoner.mainWindow else { return }
+        window.setContentSize(NSSize(width: parts[0], height: parts[1]))
+        window.contentView?.layoutSubtreeIfNeeded()
+        // Un tour de boucle pour que SwiftUI refasse la disposition.
+        try? await Task.sleep(for: .milliseconds(500))
     }
 }
 #endif
