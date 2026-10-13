@@ -1,0 +1,5 @@
+import AllegeCore
+
+run([
+    databaseTests,
+])

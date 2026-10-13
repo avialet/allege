@@ -1,0 +1,63 @@
+name: Allege
+options:
+  bundleIdPrefix: fr.vialet
+  deploymentTarget:
+    macOS: "26.0"
+  xcodeVersion: "26.0"
+  createIntermediateGroups: true
+# Version.xcconfig est ecrit par `make gen` depuis VERSION (MARKETING_VERSION).
+configFiles:
+  Debug: Version.xcconfig
+  Release: Version.xcconfig
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGN_STYLE: Manual
+    DEVELOPMENT_TEAM: ""
+    CURRENT_PROJECT_VERSION: "1"
+packages:
+  VialetKit:
+    url: https://github.com/avialet/vialetkit.git
+    from: "0.1.0"
+  AllegeCore:
+    path: Packages/AllegeCore
+targets:
+  Allege:
+    type: application
+    platform: macOS
+    sources:
+      - path: Allege
+        excludes:
+          - "Resources/Info.plist"
+    dependencies:
+      - package: VialetKit
+      - package: AllegeCore
+    info:
+      path: Allege/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: Allège
+        CFBundleName: Allege
+        LSMinimumSystemVersion: "26.0"
+        NSHumanReadableCopyright: "Aurelien Vialet"
+        CFBundleURLTypes:
+          - CFBundleURLName: fr.vialet.allege
+            CFBundleURLSchemes: [allege]
+        LSApplicationCategoryType: public.app-category.productivity
+        CFBundleIconFile: AppIcon
+    entitlements:
+      path: Allege/Resources/Allege.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: fr.vialet.allege
+        ENABLE_HARDENED_RUNTIME: false
+schemes:
+  Allege:
+    build:
+      targets:
+        Allege: all
+    run:
+      config: Debug
