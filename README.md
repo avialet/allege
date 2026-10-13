@@ -12,7 +12,7 @@
 
 [**Télécharger le DMG**](https://github.com/avialet/allege/releases/latest) · [Site](https://allege.vialet.app)
 
-<img src="docs/screenshots/fenetre.png" width="900" alt="Allège après traitement de cinq images">
+<img src="docs/screenshots/fenetre.png" width="900" alt="Allège après traitement de trois photos d'exemple">
 
 </div>
 
@@ -53,7 +53,7 @@ existe une plus récente, un clic la télécharge, **vérifie son empreinte SHA-
 l'application qu'elle contient, la remplace et relance l'app. Si une étape échoue, l'app
 installée n'est pas touchée. La recherche automatique se désactive dans **Réglages › Mises à jour**.
 
-Le seul échange réseau de Allège est cette lecture de la version publiée. Aucune donnée n'est envoyée.
+Le seul échange réseau d'Allège est cette lecture de la version publiée. Aucune donnée n'est envoyée.
 
 ## Notice
 
@@ -91,15 +91,23 @@ make install   # installe dans /Applications
 make release   # fabrique build/Allege-X.Y.Z.dmg et son empreinte
 ```
 
+L'icône et l'habillage du DMG viennent du dépôt [vialetapps](https://github.com/avialet/vialetapps)
+(`scripts/plaque.swift`), cloné à côté de l'app (sinon `VIALETAPPS_PATH=<chemin>`) :
+
+```bash
+make icon         # icône : plaque aux teintes de App/Brand.swift et son glyphe
+make dmg-layout   # fond et disposition de la fenêtre du DMG, dans scripts/dmg (à committer)
+```
+
 | Dossier | Contenu |
 |---|---|
 | `Packages/AllegeCore` | Noyau sans interface : formats, préréglages, collecte des fichiers, traitement ImageIO, estimation |
 | `Allege` | L'application SwiftUI ; `App/Brand.swift` porte son identité |
-| `scripts` | Assemblage de l'app, du DMG et de l'icône |
+| `scripts` | Assemblage de l'app et du DMG (fond et disposition dans `scripts/dmg`) |
 | `docs` | [Publier une version](docs/publier-une-version.md), [tests](docs/tests.md), notes de version |
 
-Le socle commun (mises à jour, thème, raccourci global, panneau flottant) vient de
-[VialetKit](https://github.com/avialet/vialetkit). Publier une version ne demande que de
+Le socle commun (mises à jour, thème et police, Réglages, À propos, raccourci global)
+vient de [VialetKit](https://github.com/avialet/vialetkit) 0.2. Publier une version ne demande que de
 modifier `VERSION` puis de pousser un tag `vX.Y.Z` : la CI construit et publie le DMG, et
 les utilisateurs reçoivent la mise à jour dans l'app.
 
