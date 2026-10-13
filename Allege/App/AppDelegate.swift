@@ -4,14 +4,15 @@ import VialetKit
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
+        #if DEBUG
+        // Mode capture : ni raccourci global, ni reseau.
+        if runSnapshotIfRequested() { return }
+        #endif
         HotKeyController.shared.start { WindowSummoner.toggle() }
         // Laisse l'app s'afficher avant le moindre appel reseau.
         DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
             MainActor.assumeIsolated { Updater.shared.checkAutomatically() }
         }
-        #if DEBUG
-        runSnapshotIfRequested()
-        #endif
     }
 
     /// « Ouvrir avec Allège » dans le Finder, ou glisser sur l'icone du Dock.
@@ -31,41 +32,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 }
 
 #if DEBUG
-/// Mode de verification sans ecran : `Allege -AllegeSnapshot /chemin/base -AllegeSnapshotFiles "a.jpg,b.png" -AllegeSnapshotProcess 1`
-/// ajoute les fichiers, capture la fenetre (`base-1.png`), traite, capture (`base-2.png`), quitte.
+/// Mode capture sans ecran (voir SnapshotRunner) : `Allege -AllegeSnapshot <dossier>
+/// [-AllegeSnapshotFiles "a.jpg,b.png"] [-AllegeSnapshotProcess 1] [-AllegeOutputFolder <dossier>]
+/// [-AllegeSnapshotAppearance dark] [-AllegeSnapshotOnly a,b] [-AllegeSnapshotSize 1000x720]`.
+/// Ajoute les fichiers (images d'exemple neutres, voir brand/exemples du depot vialetapps), ecrit
+/// `mainWindow` (file d'attente et estimations), `settings`, `about` puis, avec SnapshotProcess,
+/// `resultats` (apres traitement) ; `-sombre` en sombre. Quitte ensuite.
 extension AppDelegate {
-    func runSnapshotIfRequested() {
+    func runSnapshotIfRequested() -> Bool {
+        guard SnapshotRequest.parse(prefix: Brand.name, arguments: CommandLine.arguments) != nil else { return false }
         let defaults = UserDefaults.standard
-        guard let base = defaults.string(forKey: "AllegeSnapshot") else { return }
-        let files = (defaults.string(forKey: "AllegeSnapshotFiles") ?? "").split(separator: ",").map { URL(fileURLWithPath: String($0)) }
-        let process = defaults.bool(forKey: "AllegeSnapshotProcess")
-        Task { @MainActor in
-            if !files.isEmpty { AppState.shared.add(files) }
-            try? await Task.sleep(for: .seconds(2))
-            await applySnapshotSize(defaults)
-            if let window = WindowSummoner.mainWindow { try? WindowSnapshot.write(window, to: URL(fileURLWithPath: base + "-1.png")) }
-            if process {
-                AppState.shared.processAll()
-                while AppState.shared.isProcessing { try? await Task.sleep(for: .milliseconds(200)) }
-                try? await Task.sleep(for: .seconds(1))
-                if let window = WindowSummoner.mainWindow { try? WindowSnapshot.write(window, to: URL(fileURLWithPath: base + "-2.png")) }
-                for item in AppState.shared.items {
-                    print("\(item.name): \(item.state)")
-                }
-            }
-            NSApp.terminate(nil)
+        let files = (defaults.string(forKey: Brand.key("SnapshotFiles")) ?? "")
+            .split(separator: ",").map { URL(fileURLWithPath: String($0)) }
+        if !files.isEmpty { AppState.shared.add(files) }
+        let standard = SnapshotRunner.standardScenarios(mainWindow: { WindowSummoner.mainWindow }, identity: Brand.identity)
+            .filter { $0.name != "floatingPanel" } // pas de panneau flottant dans Allege
+        var scenarios = standard
+        if defaults.bool(forKey: Brand.key("SnapshotProcess")) {
+            scenarios.append(SnapshotScenario("resultats") {
+                let state = AppState.shared
+                state.processAll()
+                while state.isProcessing { try await Task.sleep(for: .milliseconds(200)) }
+                WindowSummoner.show()
+                try await Task.sleep(for: .seconds(1))
+                return WindowSummoner.mainWindow
+            })
         }
-    }
-
-    /// `-AllegeSnapshotSize 1000x720` : taille de contenu (points) de la fenetre principale avant capture.
-    func applySnapshotSize(_ defaults: UserDefaults) async {
-        guard let spec = defaults.string(forKey: "AllegeSnapshotSize") else { return }
-        let parts = spec.lowercased().split(separator: "x").compactMap { Double($0) }
-        guard parts.count == 2, parts.allSatisfy({ $0 > 0 }), let window = WindowSummoner.mainWindow else { return }
-        window.setContentSize(NSSize(width: parts[0], height: parts[1]))
-        window.contentView?.layoutSubtreeIfNeeded()
-        // Un tour de boucle pour que SwiftUI refasse la disposition.
-        try? await Task.sleep(for: .milliseconds(500))
+        return SnapshotRunner.runIfRequested(prefix: Brand.name, scenarios: scenarios)
     }
 }
 #endif
