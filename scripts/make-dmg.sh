@@ -1,6 +1,6 @@
 #!/bin/zsh
 # Fabrique build/Allege-X.Y.Z.dmg et son checksum a partir de build/Allege.app.
-# DMG habille : volume "All\u00e8ge" (Allege accentue, sans version), l'app et un lien Applications,
+# DMG habille : volume "Allege" accentue (sans version), l'app et un lien Applications,
 # fond .background/fond.png, icone de volume (.VolumeIcon.icns) et disposition du Finder
 # (.DS_Store, copie de scripts/dmg/DS_Store, produit une fois par `make dmg-layout`).
 # L'app reste a la racine du volume sous le nom Allege.app : l'Updater de VialetKit en depend.
@@ -13,7 +13,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 APP_NAME="Allege"
-VOLUME=$'All\u00e8ge' # nom affiche (zsh : \u00e8 = e accent grave)
+VOLUME=$'All\303\250ge' # nom affiche en UTF-8 (octets de e accent grave, quelle que soit la locale)
 VERSION="$(tr -d '[:space:]' < "$ROOT/VERSION")"
 APP="$ROOT/build/$APP_NAME.app"
 DMG="$ROOT/build/$APP_NAME-$VERSION.dmg"
