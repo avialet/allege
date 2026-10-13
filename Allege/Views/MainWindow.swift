@@ -8,9 +8,12 @@ struct MainWindow: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            queue
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(AmbientBackground())
+            VStack(spacing: 0) {
+                UpdateNotice(updater: .shared)
+                queue
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(AmbientBackground())
             PresetPanel()
                 .frame(width: 340)
                 .background(Theme.sidebar)
@@ -50,7 +53,6 @@ struct MainWindow: View {
                             .allowsHitTesting(false)
                     }
                 }
-                UpdateBanner(updater: Updater.shared).padding(.horizontal, -12)
             }
         }
         .padding(.horizontal, 28)
@@ -79,7 +81,6 @@ struct DropZone: View {
                 .padding(.top, 6)
             Text("JPEG, PNG, HEIC, TIFF, WebP, AVIF, RAW…")
                 .font(Theme.ui(11)).foregroundStyle(Theme.inkFaint)
-            UpdateBanner(updater: Updater.shared)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(
