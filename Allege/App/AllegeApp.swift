@@ -24,6 +24,7 @@ struct AllegeApp: App {
         .defaultSize(width: 1000, height: 720)
         .commands {
             AboutCommands(identity: Brand.identity)
+            UpdateCommands(updater: .shared)
             AllegeCommands(state: state)
         }
 
