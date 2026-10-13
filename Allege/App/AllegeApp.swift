@@ -5,7 +5,10 @@ import VialetKit
 struct AllegeApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var state = AppState.shared
-    @AppStorage("AllegeMenuBar") private var menuBarVisible = true
+    @AppStorage(Brand.key("MenuBar")) private var menuBarVisible = true
+
+    /// Teintes de l'app avant le premier rendu (et police Bricolage Grotesque des titres).
+    init() { Theme.configure(Brand.palette) }
 
     var body: some Scene {
         Window(Brand.displayName, id: "main") {
@@ -19,7 +22,10 @@ struct AllegeApp: App {
         .windowStyle(.hiddenTitleBar)
         .windowBackgroundDragBehavior(.enabled)
         .defaultSize(width: 1000, height: 720)
-        .commands { AllegeCommands(state: state) }
+        .commands {
+            AboutCommands(identity: Brand.identity)
+            AllegeCommands(state: state)
+        }
 
         Settings {
             SettingsView()
@@ -28,7 +34,7 @@ struct AllegeApp: App {
         MenuBarExtra(isInserted: $menuBarVisible) {
             MenuBarContent().environment(state)
         } label: {
-            Image(systemName: "photo.badge.arrow.down")
+            MenuBarIcon(glyph: Brand.glyph)
         }
     }
 }

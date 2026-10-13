@@ -10,7 +10,7 @@ struct MainWindow: View {
         HStack(spacing: 0) {
             queue
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(AmbientBackground(accent: Brand.accent))
+                .background(AmbientBackground())
             PresetPanel()
                 .frame(width: 340)
                 .background(Theme.sidebar)
@@ -24,8 +24,7 @@ struct MainWindow: View {
     private var queue: some View {
         VStack(alignment: .leading, spacing: 18) {
             HStack(alignment: .firstTextBaseline, spacing: 0) {
-                Text(Brand.displayName).font(Theme.display(30)).foregroundStyle(Theme.ink)
-                Text(".").font(Theme.display(30)).foregroundStyle(Brand.accent)
+                Wordmark(Brand.displayName)
                 Spacer()
                 if !state.items.isEmpty {
                     Button("Ajouter…") { state.chooseFiles() }.controlSize(.small)
@@ -46,8 +45,8 @@ struct MainWindow: View {
                 .overlay {
                     if targeted {
                         RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .strokeBorder(Brand.accent, style: StrokeStyle(lineWidth: 2, dash: [8, 6]))
-                            .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Brand.accent.opacity(0.06)))
+                            .strokeBorder(Theme.accent, style: StrokeStyle(lineWidth: 2, dash: [8, 6]))
+                            .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Theme.accent.opacity(0.06)))
                             .allowsHitTesting(false)
                     }
                 }
@@ -69,7 +68,7 @@ struct DropZone: View {
         VStack(spacing: 14) {
             Image(systemName: "photo.on.rectangle.angled")
                 .font(.system(size: 44, weight: .light))
-                .foregroundStyle(targeted ? Brand.accent : Theme.inkFaint)
+                .foregroundStyle(targeted ? Theme.accent : Theme.inkFaint)
                 .symbolEffect(.bounce, value: targeted)
             Text("Déposez des images ou des dossiers")
                 .font(Theme.ui(17, weight: .semibold)).foregroundStyle(Theme.ink)
@@ -85,11 +84,11 @@ struct DropZone: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .fill(targeted ? Brand.accent.opacity(0.08) : Theme.card.opacity(0.6))
+                .fill(targeted ? Theme.accent.opacity(0.08) : Theme.card.opacity(0.6))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .strokeBorder(targeted ? Brand.accent : Theme.line, style: StrokeStyle(lineWidth: targeted ? 2 : 1.2, dash: [9, 7]))
+                .strokeBorder(targeted ? Theme.accent : Theme.line, style: StrokeStyle(lineWidth: targeted ? 2 : 1.2, dash: [9, 7]))
         )
         .animation(.easeOut(duration: 0.15), value: targeted)
     }

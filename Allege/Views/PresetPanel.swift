@@ -56,7 +56,7 @@ struct PresetPanel: View {
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(title).font(Theme.ui(12, weight: .bold)).foregroundStyle(Theme.inkFaint).textCase(.uppercase)
+            SectionHeader(title)
             content()
         }
     }
@@ -75,7 +75,7 @@ struct PresetPanel: View {
                 ProgressView(value: Double(state.completed), total: Double(max(1, state.total))) {
                     Text("\(state.completed) / \(state.total)").font(Theme.ui(11.5)).foregroundStyle(Theme.inkSoft)
                 }
-                .tint(Brand.accent)
+                .tint(Theme.accent)
             } else if state.pendingCount > 0 {
                 Button {
                     state.processAll()
@@ -85,7 +85,7 @@ struct PresetPanel: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 6)
                 }
-                .buttonStyle(.borderedProminent).tint(Brand.accent).controlSize(.large)
+                .buttonStyle(PrimaryButtonStyle())
             } else if !state.doneResults.isEmpty {
                 HStack(spacing: 8) {
                     Button("Afficher dans le Finder") { state.revealResults() }.controlSize(.large)
@@ -111,15 +111,15 @@ struct PresetCard: View {
             HStack(alignment: .top, spacing: 9) {
                 Image(systemName: preset.icon)
                     .font(.system(size: 11, weight: .bold))
-                    .foregroundStyle(selected ? Color.white : Brand.accent)
+                    .foregroundStyle(selected ? Color.white : Theme.accent)
                     .frame(width: 24, height: 24)
-                    .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(selected ? AnyShapeStyle(Brand.accent.gradient) : AnyShapeStyle(Brand.accent.opacity(0.14))))
+                    .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(selected ? AnyShapeStyle(Theme.accent.gradient) : AnyShapeStyle(Theme.accentSelection)))
                 VStack(alignment: .leading, spacing: 1) {
                     Text(preset.name).font(Theme.ui(12.5, weight: .bold)).foregroundStyle(Theme.ink)
                     if selected {
                         Text(preset.detail).font(Theme.ui(11)).foregroundStyle(Theme.inkSoft).fixedSize(horizontal: false, vertical: true)
                     }
-                    Text(preset.summary).font(Theme.ui(10.5, weight: .semibold)).foregroundStyle(selected ? Brand.accent : Theme.inkFaint)
+                    Text(preset.summary).font(Theme.ui(10.5, weight: .semibold)).foregroundStyle(selected ? Theme.accent : Theme.inkFaint)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 0)
@@ -127,11 +127,27 @@ struct PresetCard: View {
             .padding(.horizontal, 9).padding(.vertical, 7)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(selected ? Theme.card : (hovering ? Theme.card.opacity(0.7) : .clear)))
-            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(selected ? Brand.accent.opacity(0.6) : Theme.line.opacity(hovering ? 1 : 0), lineWidth: 1.2))
+            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(selected ? Theme.accent.opacity(0.6) : Theme.line.opacity(hovering ? 1 : 0), lineWidth: 1.2))
             .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         }
         .buttonStyle(.plain)
         .onHover { hovering = $0 }
         .animation(.easeOut(duration: 0.12), value: selected)
+    }
+}
+
+/// Bouton principal aux teintes de l'affiche, comme sur le site : fond `deep` et texte blanc
+/// en clair, fond `background` et texte `deep` en sombre.
+private struct PrimaryButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding(.vertical, 5)
+            .foregroundStyle(Theme.accentPrimaryButtonForeground)
+            .background(RoundedRectangle(cornerRadius: Theme.Radius.row, style: .continuous)
+                .fill(Theme.accentPrimaryButtonBackground))
+            .contentShape(RoundedRectangle(cornerRadius: Theme.Radius.row, style: .continuous))
+            .opacity(isEnabled ? (configuration.isPressed ? 0.82 : 1) : 0.5)
     }
 }
