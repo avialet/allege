@@ -5,7 +5,8 @@ import VialetKit
 struct SettingsView: View {
     var body: some View {
         SettingsScreen(app: Brand.identity, hotKey: HotKeyController.shared, updater: Updater.shared,
-                       menuBar: MenuBarPresence.shared,
-                       hotKeyHint: "Depuis n'importe quelle app : affiche ou masque \(Brand.displayName).")
+                       menuBar: MenuBarPresence.shared, dock: DockPresence.shared,
+                       hotKeyHint: "Depuis n'importe quelle app : affiche ou masque \(Brand.displayName).",
+                       updateNote: HubPresence.updateNote)
     }
 }
